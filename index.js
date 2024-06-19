@@ -22,6 +22,20 @@ app.use(cors());
 // ROUTES
 app.use("/minors", minorRoutes);
 
+// KEEPING THE SERVER BUSY
+const periodicFunction = async () => {
+  const response = await fetch(`${process.env.SERVER_URL}/minors`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await response.json();
+  console.log(data);
+};
+
+const intervalId = setInterval(periodicFunction, 600000); // 10 minutes
+
 // DATABASE CONNECTION
 const PORT = process.env.PORT || 6001;
 mongoose
