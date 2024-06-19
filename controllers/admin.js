@@ -5,11 +5,13 @@ import { courses, students } from "../data.js";
 // RUN
 export const allocateMinors = async (req, res) => {
   try {
-    const vacancies = 8;
-    const minReqSeats = 5;
+    const vacancies = 4;
+    const minReqSeats = 4;
 
-		// const courses = await Minor.find();
-		// const students = await Student.find();
+    const courses = await Minor.find();
+    const students = await Student.find();
+
+    const droppedCourses = [];
 
     // ranking (sorting) students based on cgpa, sgpa 2, 1
     students.sort((a, b) => {
@@ -25,6 +27,11 @@ export const allocateMinors = async (req, res) => {
     // allocating seats
     let allCoursesHaveMinReqSeats = false;
     while (!allCoursesHaveMinReqSeats) {
+      // reset enrolled status
+      for (const course of courses) {
+        course.enrolled = 0;
+      }
+
       // assigning courses to students based on their choices
       for (const student of students) {
         for (const choice of student.choices) {
@@ -54,13 +61,14 @@ export const allocateMinors = async (req, res) => {
         }
       }
 
-      // if no, delete the course with lowest students
+      // if no, delete the course(s) with lowest students
       if (!allCoursesHaveMinReqSeats) {
-        courses.splice(minIndex, 1);
-
-        // reset enrolled status
-        for (const course of courses) {
-          course.enrolled = 0;
+        for (const [index, course] of courses.entries()) {
+          if (course.enrolled === min) {
+            console.log(`Course ${course.code} deleted`);
+            droppedCourses.push(course);
+            courses.splice(index, 1);
+          }
         }
       }
     }
@@ -68,10 +76,14 @@ export const allocateMinors = async (req, res) => {
     // print allocation details course wise
     console.log("Course Allocation");
     console.log("====================================");
+
+    const courseWiseData = [];
+
     for (const course of courses) {
       console.log(
-        `${course.code} (${course.title}) - Enrolled: ${course.enrolled}/${vacancies}`
+        `${course.code} (${course.name}) - Enrolled: ${course.enrolled}/${vacancies}`
       );
+      const studentsData = [];
       for (const [index, student] of students.entries()) {
         if (student.enrolled === course.id) {
           const choiceNo = student.choices.indexOf(course.id) + 1;
@@ -80,8 +92,18 @@ export const allocateMinors = async (req, res) => {
               index + 1
             } - choiceNo: ${choiceNo}`
           );
+          studentsData.push({
+            student,
+            rank: index + 1,
+            choiceNo,
+          });
         }
       }
+
+      courseWiseData.push({
+        course,
+        students: studentsData,
+      });
 
       console.log();
     }
@@ -89,17 +111,45 @@ export const allocateMinors = async (req, res) => {
     // print unallocated students
     console.log("Unallocated Students");
     console.log("====================================");
-    for (const student of students) {
-      if (!student.enrolled) {
+
+    const studentWiseData = [];
+    const unallocatedStudents = [];
+    for (const [index, student] of students.entries()) {
+      let enrolledCouse = {};
+      let atleastOne = false;
+      for (const course of courses) {
+        if (student.enrolled === course.id) {
+          enrolledCouse = course;
+          atleastOne = true;
+          break;
+        }
+      }
+
+      if (!atleastOne) {
         console.log(
           `${student.regNo} - ${student.name} - cgpa: ${student.cgpa} - sgpaS2: ${student.sgpaS2} - sgpaS1: ${student.sgpaS1}`
         );
+        unallocatedStudents.push(student);
       }
+
+      studentWiseData.push({
+        student,
+        rank: index + 1,
+        enrolledCouse,
+      });
     }
 
-		res.status(200).json({ message: "Minors allocated successfully" });
+    res.status(200).json({
+      courseWise: {
+        data: courseWiseData,
+        droppedCourses,
+        vacancies,
+        minReqSeats,
+      },
+      studentWise: { data: studentWiseData, unallocatedStudents },
+    });
   } catch (err) {
     console.log(err);
-		res.status(409).json({ message: err.message });
+    res.status(409).json({ message: err.message });
   }
 };

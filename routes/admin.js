@@ -5,5 +5,6 @@ const router = express.Router();
 
 // RUN
 router.put("/allocate", allocateMinors);
+router.get("/allocate", allocateMinors);
 
 export default router;

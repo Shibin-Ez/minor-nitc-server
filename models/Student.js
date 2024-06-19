@@ -51,8 +51,8 @@ const studentSchema = new mongoose.Schema(
 			default: [],
     },
     enrolled: {
-      type: Number,
-      default: -1,
+      type: String,
+      default: "none",
     },
   },
   {
