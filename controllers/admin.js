@@ -102,6 +102,7 @@ export const allocateMinors = async (req, res) => {
 
       courseWiseData.push({
         course,
+				enrolled: course.enrolled,
         students: studentsData,
       });
 
