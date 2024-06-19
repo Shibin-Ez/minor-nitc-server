@@ -43,3 +43,16 @@ export const getMinors = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+export const getMinorById = async (req, res) => {
+  try {
+    const minorId = req.params.id;
+    const minor = await Minor.findById(minorId);
+    if (!minor) {
+      return res.status(404).json({ message: "Minor not found" });
+    }
+    res.status(200).json(minor);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};

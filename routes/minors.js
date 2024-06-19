@@ -1,5 +1,5 @@
 import express from 'express';
-import { createMinor, getMinors } from '../controllers/minors.js';
+import { createMinor, getMinorById, getMinors } from '../controllers/minors.js';
 
 const router = express.Router();
 
@@ -8,5 +8,6 @@ router.post('/', createMinor);
 
 // READ
 router.get('/', getMinors);
+router.get("/minor/:id", getMinorById);
 
 export default router;
