@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import minorRoutes from './routes/minors.js';
+import studentRoutes from './routes/students.js';
 
 // CONFIGURATION
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(cors());
 
 // ROUTES
 app.use("/minors", minorRoutes);
+app.use("/students", studentRoutes);
 
 // KEEPING THE SERVER BUSY
 const periodicFunction = async () => {

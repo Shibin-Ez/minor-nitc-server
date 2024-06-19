@@ -1,9 +1,11 @@
-regNo,name,cgpa,sgpaS2,sgpaS1,
-B230014AR,Alice,7.5,7.54,7.43
-B230015AR,Bob,7.4,7.44,7.34
-B230016AR,Charlie,7.3,7.34,7.23
-B230017AR,David,7.2,7.24,7.13
-B230018AR,Eve,7.1,7.14,7.03
-B230019AR,Frank,7.0,7.04,6.93
-B230020AR,Grace,6.9,6.94,6.83
-B230021AR,Hank,6.8,6.84,6.73
+name,regNo,email,programName,semester,sectionBatchName,faName,faEmail,cgpa,sgpaS2,sgpaS1,enrolled
+John Doe,B230014AR,johndoe@example.com,Computer Science,3,A-2023,Dr. Alice Smith,alice.smith@example.com,3.75,3.8,3.7,-1
+Jane Smith,B230015AR,janesmith@example.com,Electrical Engineering,4,B-2022,Prof. Robert Brown,robert.brown@example.com,3.9,4.0,3.8,-1
+Michael Johnson,B230114AR,michaeljohnson@example.com,Business Administration,2,C-2024,Dr. Emily White,emily.white@example.com,3.6,3.7,3.5,-1
+Emily Brown,B230011AR,emilybrown@example.com,Psychology,5,D-2021,Prof. David Green,david.green@example.com,3.8,3.9,3.7,-1
+David Lee,B231014AR,davidlee@example.com,Chemical Engineering,3,E-2023,Dr. Sarah Taylor,sarah.taylor@example.com,3.7,3.8,3.6,-1
+Sophia Miller,B231114AR,sophiamiller@example.com,English Literature,4,F-2022,Prof. James Clark,james.clark@example.com,3.85,3.9,3.8,-1
+Olivia Wilson,B231214AR,oliviawilson@example.com,Economics,6,G-2021,Dr. Andrew Harris,andrew.harris@example.com,3.95,4.0,3.9-1
+Daniel Davis,B231414AR,danieldavis@example.com,History,3,H-2023,Prof. Emma Martinez,emma.martinez@example.com,3.65,3.7,3.6,-1
+Liam Martinez,B230514AR,liammartinez@example.com,Political Science,4,I-2022,Dr. Sophia Allen,sophia.allen@example.com,3.75,3.8,3.7,-1
+Emma Garcia,B230614AR,emmagarcia@example.com,Physics,5,J-2021,Prof. William Wilson,william.wilson@example.com,3.85,3.9,3.8,-1

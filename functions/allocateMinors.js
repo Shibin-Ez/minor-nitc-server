@@ -1,4 +1,4 @@
-import { courses, students } from "./data.js";
+import { courses, students } from "../data.js";
 
 const vacancies = 8;
 const minReqSeats = 5;
