@@ -1,9 +1,15 @@
+import Minor from "../models/Minor.js";
+import Student from "../models/Student.js";
 import { courses, students } from "../data.js";
 
-const allocateMinors = async () => {
+// RUN
+export const allocateMinors = async (req, res) => {
   try {
     const vacancies = 8;
     const minReqSeats = 5;
+
+		// const courses = await Minor.find();
+		// const students = await Student.find();
 
     // ranking (sorting) students based on cgpa, sgpa 2, 1
     students.sort((a, b) => {
@@ -90,7 +96,10 @@ const allocateMinors = async () => {
         );
       }
     }
+
+		res.status(200).json({ message: "Minors allocated successfully" });
   } catch (err) {
     console.log(err);
+		res.status(409).json({ message: err.message });
   }
 };
