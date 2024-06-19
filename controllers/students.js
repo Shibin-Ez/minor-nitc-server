@@ -44,6 +44,8 @@ export const updateStudentWithChoices = async (req, res) => {
   try {
     const studentId = req.params.id;
     const { choices } = req.body; // expects array of minor ids
+		console.log(choices);
+		console.log(studentId);
     const student = await Student.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });

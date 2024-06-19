@@ -47,7 +47,7 @@ const studentSchema = new mongoose.Schema(
       required: true,
     },
     choices: {
-      type: [Number],
+      type: [String],
 			default: [],
     },
     enrolled: {
