@@ -4,9 +4,10 @@ import readFromCSV from "../functions/readFromCSV.js";
 // CREATE
 export const createStudentsFromCSV = async () => {
   try {
-    const students = await readFromCSV("./data/students.csv");
+    const students = await readFromCSV("./public/assets/students.csv");
     console.log(students);
 
+    await Student.deleteMany({});
     await Student.insertMany(students);
     console.log("Students data uploaded successfully");
     res.status(201).json({ message: "Students created successfully" });

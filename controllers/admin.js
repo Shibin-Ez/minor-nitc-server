@@ -5,11 +5,27 @@ import { courses, students } from "../data.js";
 // UPLOAD
 export const uploadCSV = async (req, res) => {
 	try {
+    console.log(req.file);
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
 		res.status(201).json({ message: "File uploaded successfully" });
 	} catch (err) {
 		console.log(err);
 		res.status(409).json({ message: err.message });
 	}
+};
+
+// DOWNLOAD
+export const downloadCSV = async (req, res) => {
+  try {
+    res.download("./public/assets/students.csv", "students.csv");
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err.message });
+  }
 };
 
 // RUN
