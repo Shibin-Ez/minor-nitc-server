@@ -1,6 +1,7 @@
 import Minor from "../models/Minor.js";
 import Student from "../models/Student.js";
 import { courses, students } from "../data.js";
+import { createStudentsFromCSV } from "./students.js";
 
 // UPLOAD
 export const uploadCSV = async (req, res) => {
@@ -10,6 +11,8 @@ export const uploadCSV = async (req, res) => {
     if (!file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
+
+    await createStudentsFromCSV();
 
 		res.status(201).json({ message: "File uploaded successfully" });
 	} catch (err) {

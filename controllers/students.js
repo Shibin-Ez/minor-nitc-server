@@ -10,7 +10,7 @@ export const createStudentsFromCSV = async () => {
     await Student.deleteMany({});
     await Student.insertMany(students);
     console.log("Students data uploaded successfully");
-    res.status(201).json({ message: "Students created successfully" });
+    // res.status(201).json({ message: "Students created successfully" });
   } catch (err) {
     console.log(err);
     // res.status(409).json({ message: err.message });
