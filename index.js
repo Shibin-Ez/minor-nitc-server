@@ -5,10 +5,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import multer from 'multer';
 
 import minorRoutes from './routes/minors.js';
 import studentRoutes from './routes/students.js';
 import adminRoutes from './routes/admin.js';
+import { uploadCSV } from './controllers/admin.js';
 
 // CONFIGURATION
 dotenv.config();
@@ -20,6 +22,20 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
+
+// FILE STORAGE
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/assets");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage });
+
+// ROUTE WITH FILES
+app.post("/admin/upload/csv", upload.single("file"), uploadCSV)
 
 // ROUTES
 app.use("/minors", minorRoutes);

@@ -2,6 +2,16 @@ import Minor from "../models/Minor.js";
 import Student from "../models/Student.js";
 import { courses, students } from "../data.js";
 
+// UPLOAD
+export const uploadCSV = async (req, res) => {
+	try {
+		res.status(201).json({ message: "File uploaded successfully" });
+	} catch (err) {
+		console.log(err);
+		res.status(409).json({ message: err.message });
+	}
+};
+
 // RUN
 export const allocateMinors = async (req, res) => {
   try {
