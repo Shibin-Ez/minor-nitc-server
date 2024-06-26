@@ -19,8 +19,3 @@ const minorIds = [
   "6672407940e410a76494e1ef",
   "6672408140e410a76494e1f1",
 ];
-
-for (let i=0; i<10; i++) {
-    const student = students[i];
-    student.choices = minorIds;
-}

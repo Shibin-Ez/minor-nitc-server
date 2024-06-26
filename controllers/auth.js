@@ -1,3 +1,5 @@
+import Student from "../models/Student";
+
 // firebase login
 export const continueWithGoogle = async (req, res) => {
   try {
@@ -18,17 +20,25 @@ export const continueWithGoogle = async (req, res) => {
 
     // only allow semester 3 students
     if (semester !== 3) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "Only 3rd semester students are allowed",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "Only 3rd semester students are allowed",
+      });
     }
+
+    // check if student exists in db
+    const student = await Student.findOne({ email });
+
+    if (!student) return res.status(404).json({ message: "Student not found" });
 
     res
       .status(200)
-      .json({ success: true, semester, message: "Login successful" });
+      .json({
+        success: true,
+        studentId: student._id,
+        semester,
+        message: "Login successful",
+      });
   } catch (err) {
     res.status(409).json({ message: err.message });
     console.log(err);

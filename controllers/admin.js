@@ -5,7 +5,7 @@ import { createStudentsFromCSV } from "./students.js";
 
 // UPLOAD
 export const uploadCSV = async (req, res) => {
-	try {
+  try {
     console.log(req.file);
     const file = req.file;
     if (!file) {
@@ -14,11 +14,11 @@ export const uploadCSV = async (req, res) => {
 
     await createStudentsFromCSV();
 
-		res.status(201).json({ message: "File uploaded successfully" });
-	} catch (err) {
-		console.log(err);
-		res.status(409).json({ message: err.message });
-	}
+    res.status(201).json({ message: "File uploaded successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err.message });
+  }
 };
 
 // DOWNLOAD
@@ -34,8 +34,8 @@ export const downloadCSV = async (req, res) => {
 // RUN
 export const allocateMinors = async (req, res) => {
   try {
-    const vacancies = 4;
-    const minReqSeats = 4;
+    const vacancies = 50;
+    const minReqSeats = 10;
 
     const courses = await Minor.find();
     const students = await Student.find();
@@ -131,7 +131,7 @@ export const allocateMinors = async (req, res) => {
 
       courseWiseData.push({
         course,
-				enrolled: course.enrolled,
+        enrolled: course.enrolled,
         students: studentsData,
       });
 
@@ -183,3 +183,41 @@ export const allocateMinors = async (req, res) => {
     res.status(409).json({ message: err.message });
   }
 };
+
+// TEMP
+export const randomAlloteChoices = async () => {
+  try {
+    const students = await Student.find();
+    const minors = await Minor.find();
+
+    const choicesLen = minors.length;
+    const bulkUpdates = [];
+
+    for (const student of students) {
+      const choices = [];
+      for (const minor of minors) {
+        choices.push(minor._id);
+      }
+
+      const newChoices = [];
+      for (let i = 0; i < choicesLen; i++) {
+        const randomIndex = Math.floor(Math.random() * choices.length);
+        newChoices.push(choices[randomIndex]);
+        choices.splice(randomIndex, 1);
+      }
+      bulkUpdates.push({
+        updateOne: {
+          filter: { _id: student._id },
+          update: { choices: newChoices },
+        },
+      });
+    }
+
+    await Student.bulkWrite(bulkUpdates);
+    console.log("Choices allocated successfully");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// randomAlloteChoices();
