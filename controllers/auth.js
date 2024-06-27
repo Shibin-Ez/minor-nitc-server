@@ -6,11 +6,11 @@ export const continueWithGoogle = async (req, res) => {
     const { name, email, photoURL } = req.body;
     console.log(name, email, photoURL);
 
-    if (!email.endsWith("@nitc.ac.in")) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Only NITC emails are allowed" });
-    }
+    // if (!email.endsWith("@nitc.ac.in")) {
+    //   return res
+    //     .status(403)
+    //     .json({ success: false, message: "Only NITC emails are allowed" });
+    // }
 
     // eg: fayis_b220852cs@nitc.ac.in
     let semester = 5;
@@ -19,12 +19,12 @@ export const continueWithGoogle = async (req, res) => {
     if (yearCode === "24") semester = 1;
 
     // only allow semester 3 students
-    if (semester !== 3) {
-      return res.status(403).json({
-        success: false,
-        message: "Only 3rd semester students are allowed",
-      });
-    }
+    // if (semester !== 3) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Only 3rd semester students are allowed",
+    //   });
+    // }
 
     // check if student exists in db
     const student = await Student.findOne({ email });
