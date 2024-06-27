@@ -11,6 +11,7 @@ import path from "path";
 import minorRoutes from "./routes/minors.js";
 import studentRoutes from "./routes/students.js";
 import adminRoutes from "./routes/admin.js";
+import authRoutes from "./routes/auth.js";
 import { uploadCSV } from "./controllers/admin.js";
 
 // CONFIGURATION
@@ -59,6 +60,7 @@ app.post("/admin/upload/csv", upload.single("file"), uploadCSV, handleMulterErro
 app.use("/minors", minorRoutes);
 app.use("/students", studentRoutes);
 app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
 
 // KEEPING THE SERVER BUSY
 // const periodicFunction = async () => {
