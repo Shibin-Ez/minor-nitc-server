@@ -1,5 +1,11 @@
-import express from 'express';
-import { createStudentsFromCSV, getStudentById, getStudents, updateStudentWithChoices } from '../controllers/students.js';
+import express from "express";
+import {
+  createStudentsFromCSV,
+  getStudentById,
+  getStudents,
+  updateStudentWithChoices,
+} from "../controllers/students.js";
+import { getAppTimeline } from "../controllers/settings.js";
 
 const router = express.Router();
 
@@ -8,7 +14,8 @@ router.post("/csv", createStudentsFromCSV);
 
 // READ
 router.get("/", getStudents);
-router.get("/student/:id", getStudentById)
+router.get("/student/:id", getStudentById);
+router.get("/timeline", getAppTimeline);
 
 // UPDATE
 router.patch("/student/:id/choices", updateStudentWithChoices);

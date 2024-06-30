@@ -32,7 +32,7 @@ export const downloadCSV = async (req, res) => {
 };
 
 // RUN
-export const allocateMinors = async (req, res) => {
+export const allocateMinors = async () => {
   try {
     const vacancies = 50;
     const minReqSeats = 10;
@@ -169,7 +169,7 @@ export const allocateMinors = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return {
       courseWise: {
         data: courseWiseData,
         droppedCourses,
@@ -177,10 +177,46 @@ export const allocateMinors = async (req, res) => {
         minReqSeats,
       },
       studentWise: { data: studentWiseData, unallocatedStudents },
+    };
+  } catch (err) {
+    console.log(err);
+    return { message: err.message };
+  }
+};
+
+export const getMinorAllocation = async (req, res) => {
+  try {
+    const details = await allocateMinors();
+    res.status(200).json(details);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const confirmAllocation = async (req, res) => {
+  try {
+    const students = await allocateMinors();
+    const studentsData = students.studentWise.data;
+    console.log(studentsData);
+    const bulkUpdates = [];
+    for (const studentData of studentsData) {
+      bulkUpdates.push({
+        updateOne: {
+          filter: { _id: studentData.student._id },
+          update: { enrolled: studentData.enrolledCouse._id },
+        },
+      });
+    }
+
+    await Student.bulkWrite(bulkUpdates);
+    console.log("students enrolled and assigned to minors successfully");
+    res.status(200).json({
+      message: "students enrolled and assigned to minors successfully",
     });
   } catch (err) {
     console.log(err);
-    res.status(409).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 

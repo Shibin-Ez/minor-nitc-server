@@ -19,3 +19,7 @@ const minorIds = [
   "6672407940e410a76494e1ef",
   "6672408140e410a76494e1f1",
 ];
+
+const date = new Date().toISOString();
+const localDate = new Date(date);
+console.log(localDate);
