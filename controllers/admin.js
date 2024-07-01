@@ -32,10 +32,10 @@ export const downloadCSV = async (req, res) => {
 };
 
 // RUN
-export const allocateMinors = async () => {
+export const allocateMinors = async (vacancies, minReqSeats) => {
   try {
-    const vacancies = 50;
-    const minReqSeats = 10;
+    // const vacancies = 50;
+    // const minReqSeats = 10;
 
     const courses = await Minor.find();
     const students = await Student.find();
@@ -186,7 +186,10 @@ export const allocateMinors = async () => {
 
 export const getMinorAllocation = async (req, res) => {
   try {
-    const details = await allocateMinors();
+    const vacancies = req.query.max ? req.query.max : 50;
+    const minReqSeats = req.query.min ? req.query.min : 10;
+    console.log (vacancies + " " + minReqSeats);
+    const details = await allocateMinors(vacancies, minReqSeats);
     res.status(200).json(details);
   } catch (err) {
     console.log(err);

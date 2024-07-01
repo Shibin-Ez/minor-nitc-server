@@ -5,7 +5,7 @@ import { editTimeline, getTimeline, resetTimeline, setTimeline } from "../contro
 const router = express.Router();
 
 // RUN
-router.put("/allocate", getMinorAllocation);
+// router.put("/allocate", getMinorAllocation);
 router.get("/allocate", getMinorAllocation);
 router.get("/download/csv", downloadCSV);
 router.patch("/allocate/confirm", confirmAllocation);

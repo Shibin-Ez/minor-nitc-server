@@ -1,0 +1,12 @@
+name,regNo,email,programName,semester,sectionBatchName,faName,faEmail,cgpa,sgpaS2,sgpaS1
+Noufal Rahim,B230444CS,noufal_b220444cs@nitc.ac.in,Computer Science,4,A-2023,Dr. Alice Smith,alice.smith@example.com,8.3,7.77,7.8
+John Doe,B230014AR,johndoe@example.com,Computer Science,3,A-2023,Dr. Alice Smith,alice.smith@example.com,3.75,3.8,3.7,
+Jane Smith,B230015AR,janesmith@example.com,Electrical Engineering,4,B-2022,Prof. Robert Brown,robert.brown@example.com,3.9,4.0,3.8,
+Michael Johnson,B230114AR,michaeljohnson@example.com,Business Administration,2,C-2024,Dr. Emily White,emily.white@example.com,3.6,3.7,3.5,
+Emily Brown,B230011AR,emilybrown@example.com,Psychology,5,D-2021,Prof. David Green,david.green@example.com,3.8,3.9,3.7,
+David Lee,B231014AR,davidlee@example.com,Chemical Engineering,3,E-2023,Dr. Sarah Taylor,sarah.taylor@example.com,3.7,3.8,3.6,
+Sophia Miller,B231114AR,sophiamiller@example.com,English Literature,4,F-2022,Prof. James Clark,james.clark@example.com,3.85,3.9,3.8,
+Olivia Wilson,B231214AR,oliviawilson@example.com,Economics,6,G-2021,Dr. Andrew Harris,andrew.harris@example.com,3.95,4.0,3.9,
+Daniel Davis,B231414AR,danieldavis@example.com,History,3,H-2023,Prof. Emma Martinez,emma.martinez@example.com,3.65,3.7,3.6,
+Liam Martinez,B230514AR,liammartinez@example.com,Political Science,4,I-2022,Dr. Sophia Allen,sophia.allen@example.com,3.75,3.8,3.7,
+Emma Garcia,B230614AR,emmagarcia@example.com,Physics,5,J-2021,Prof. William Wilson,william.wilson@example.com,3.85,3.9,3.8,
