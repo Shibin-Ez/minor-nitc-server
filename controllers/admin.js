@@ -199,7 +199,9 @@ export const getMinorAllocation = async (req, res) => {
 
 export const confirmAllocation = async (req, res) => {
   try {
-    const students = await allocateMinors();
+    const vacancies = req.query.max ? req.query.max : 50;
+    const minReqSeats = req.query.min ? req.query.min : 10;
+    const students = await allocateMinors(vacancies, minReqSeats);
     const studentsData = students.studentWise.data;
     console.log(studentsData);
     const bulkUpdates = [];

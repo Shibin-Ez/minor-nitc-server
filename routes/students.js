@@ -2,6 +2,7 @@ import express from "express";
 import {
   createStudentsFromCSV,
   getStudentById,
+  getStudentResult,
   getStudents,
   updateStudentWithChoices,
 } from "../controllers/students.js";
@@ -15,6 +16,7 @@ router.post("/csv", createStudentsFromCSV);
 // READ
 router.get("/", getStudents);
 router.get("/student/:id", getStudentById);
+router.get("/student/:id/result", getStudentResult);
 router.get("/timeline", getAppTimeline);
 
 // UPDATE
