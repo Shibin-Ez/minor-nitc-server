@@ -6,7 +6,7 @@ import {
   getStudents,
   updateStudentWithChoices,
 } from "../controllers/students.js";
-import { getAppTimeline } from "../controllers/settings.js";
+// import { getAppTimeline } from "../controllers/settings.js";
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post("/csv", createStudentsFromCSV);
 router.get("/", getStudents);
 router.get("/student/:id", getStudentById);
 router.get("/student/:id/result", getStudentResult);
-router.get("/timeline", getAppTimeline);
+// router.get("/timeline", getAppTimeline);
 
 // UPDATE
 router.patch("/student/:id/choices", updateStudentWithChoices);
