@@ -57,7 +57,35 @@ export const getTimeline = async (req, res) => {
   }
 };
 
-export const getAppTimeline = async (req, res) => {};
+export const getStage = async (req, res) => {
+  try {
+    const timelines = await Setting.find();
+    if (timelines.length === 0)
+      return res
+        .status(404)
+        .json({ stage: "notStarted", message: "timeline not found" });
+
+    const timeline = timelines[0];
+    const currentDate = new Date().toISOString();
+
+    if (currentDate < timeline.startDate)
+      return res.status(200).json({ stage: "notStarted" });
+
+    if (currentDate < timeline.verificationEndDate)
+      return res.status(200).json({ stage: "verification" });
+
+    if (currentDate < timeline.choicefillingStartDate)
+      return res.status(200).json({ stage: "verificationEnd" });
+
+    if (currentDate < timeline.choicefillingEndDate)
+      return res.status(200).json({ stage: "choiceFilling" });
+
+    return res.status(200).json({ stage: "choiceFillingEnd" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+};
 
 // UPDATE
 export const editTimeline = async (req, res) => {
