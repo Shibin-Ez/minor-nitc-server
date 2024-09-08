@@ -2,6 +2,7 @@ import Minor from "../models/Minor.js";
 import Student from "../models/Student.js";
 import { courses, students } from "../data.js";
 import { createStudentsFromCSV } from "./students.js";
+import { createMinorsFromCSV } from "./minors.js";
 
 // UPLOAD
 export const uploadCSV = async (req, res) => {
@@ -13,6 +14,23 @@ export const uploadCSV = async (req, res) => {
     }
 
     await createStudentsFromCSV();
+
+    res.status(201).json({ message: "File uploaded successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err.message });
+  }
+};
+
+export const uploadCSVMinors = async (req, res) => {
+  try {
+    console.log(req.file);
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    await createMinorsFromCSV();
 
     res.status(201).json({ message: "File uploaded successfully" });
   } catch (err) {
@@ -188,7 +206,6 @@ export const getMinorAllocation = async (req, res) => {
   try {
     const vacancies = req.query.max ? req.query.max : 50;
     const minReqSeats = req.query.min ? req.query.min : 10;
-    console.log (vacancies + " " + minReqSeats);
     const details = await allocateMinors(vacancies, minReqSeats);
     res.status(200).json(details);
   } catch (err) {

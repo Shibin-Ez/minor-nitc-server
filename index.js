@@ -12,8 +12,9 @@ import minorRoutes from "./routes/minors.js";
 import studentRoutes from "./routes/students.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
-import { uploadCSV } from "./controllers/admin.js";
+import { uploadCSV, uploadCSVMinors } from "./controllers/admin.js";
 
+// import globalTunnel from "global-tunnel-ng";
 // CONFIGURATION
 dotenv.config();
 const app = express();
@@ -35,6 +36,16 @@ const storage = multer.diskStorage({
   },
 });
 
+// const storage2 = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "public/assets");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, "minors.csv");
+//   },
+// });
+
+
 const csvFileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   if (ext !== ".csv") {
@@ -44,17 +55,32 @@ const csvFileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage, fileFilter: csvFileFilter });
+// const upload2 = multer({ storage2, fileFilter: csvFileFilter });
 
 // Error handling middleware
 const handleMulterErrors = (err, req, res, next) => {
-  if (err instanceof multer.MulterError || err.message === 'Only CSV files are allowed') {
+  if (
+    err instanceof multer.MulterError ||
+    err.message === "Only CSV files are allowed"
+  ) {
     return res.status(400).json({ message: err.message });
   }
   next(err);
 };
 
 // ROUTE WITH FILES
-app.post("/admin/upload/csv", upload.single("file"), uploadCSV, handleMulterErrors);
+app.post(
+  "/admin/upload/csv",
+  upload.single("file"),
+  uploadCSV,
+  handleMulterErrors
+);
+app.post(
+  "/admin/upload/csv/minors",
+  upload.single("file"),
+  uploadCSVMinors,
+  handleMulterErrors
+);
 
 // ROUTES
 app.use("/minors", minorRoutes);

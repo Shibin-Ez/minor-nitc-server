@@ -1,4 +1,5 @@
 import Minor from "../models/Minor.js";
+import { readFromCSVMinors } from "../functions/readFromCSV.js";
 
 // CREATE
 export const createMinor = async (req, res) => {
@@ -33,6 +34,19 @@ export const createMinor = async (req, res) => {
     res.status(409).json({ message: err.message });
   }
 };
+
+
+export const createMinorsFromCSV = async (req, res) => {
+  try {
+    const minors = await readFromCSVMinors("./public/assets/students.csv");
+
+    await Minor.deleteMany({});
+    await Minor.insertMany(minors);
+    console.log("successfully uploaded minors count: " + minors.length);
+  } catch (err) {
+    res.status(409).json({ message: err.message });
+  }
+}
 
 // READ
 export const getMinors = async (req, res) => {

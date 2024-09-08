@@ -1,0 +1,4 @@
+name,code,department,faculty,facultyEmail,facultyContact,credit,description,schedule
+Minor in Computer Science,CS,Computer Science,Dr. John Doe,johndoe@gmail.com,1234567890,20,This minor is designed for students who want to learn the basics of computer science,Monday/Wednesday/Friday 10:00 AM - 12:00 PM
+Minor in Mathematics,MA,Mathematics,Dr. Jane Doe,jane@gmail.com,1234567890,20,This minor is designed for students who want to learn the basics of mathematics,Monday/Wednesday/Friday 10:00 AM - 12:00 PM
+Minor in Physics,PH,Physics,Dr. Antony Joe,antony@gmail.com,1234567890,20,This minor is designed for students who want to learn the basics of physics,Monday/Tuesday/Friday 10:00 AM - 12:00 PM

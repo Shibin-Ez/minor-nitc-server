@@ -67,17 +67,26 @@ export const getStage = async (req, res) => {
 
     const timeline = timelines[0];
     const currentDate = new Date().toISOString();
+    // currentDate = currentDate.slice(0, -5) + '000Z';
+    console.log(currentDate);
+    console.log(timeline.verificationEndDate);
 
-    if (currentDate < timeline.startDate)
+    const currentDateObj = new Date(currentDate);
+    const startDateObj = new Date(timeline.startDate);
+    const verificationEndDateObj = new Date(timeline.verificationEndDate);
+    const choicefillingStartDateObj = new Date(timeline.choicefillingStartDate);
+    const choicefillingEndDateObj = new Date(timeline.choicefillingEndDate);
+
+    if (currentDateObj < startDateObj)
       return res.status(200).json({ stage: "notStarted" });
 
-    if (currentDate < timeline.verificationEndDate)
+    if (currentDateObj < verificationEndDateObj)
       return res.status(200).json({ stage: "verification" });
 
-    if (currentDate < timeline.choicefillingStartDate)
+    if (currentDateObj < choicefillingStartDateObj)
       return res.status(200).json({ stage: "verificationEnd" });
 
-    if (currentDate < timeline.choicefillingEndDate)
+    if (currentDateObj < choicefillingEndDateObj)
       return res.status(200).json({ stage: "choiceFilling" });
 
     return res.status(200).json({ stage: "choiceFillingEnd" });

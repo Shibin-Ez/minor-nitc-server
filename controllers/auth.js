@@ -3,8 +3,8 @@ import Student from "../models/Student.js";
 // firebase login
 export const continueWithGoogle = async (req, res) => {
   try {
-    const { name, email, photoURL } = req.body;
-    console.log(name, email, photoURL);
+    const { name, email, photo } = req.body;
+    console.log(name, email, photo);
 
     // if (!email.endsWith("@nitc.ac.in")) {
     //   return res
@@ -14,9 +14,9 @@ export const continueWithGoogle = async (req, res) => {
 
     // eg: fayis_b220852cs@nitc.ac.in
     let semester = 5;
-    const yearCode = email.split("_")[1].substring(1, 3);
-    if (yearCode === "23") semester = 3;
-    if (yearCode === "24") semester = 1;
+    // const yearCode = email.split("_")[1].substring(1, 3);
+    // if (yearCode === "23") semester = 3;
+    // if (yearCode === "24") semester = 1;
 
     // only allow semester 3 students
     // if (semester !== 3) {
