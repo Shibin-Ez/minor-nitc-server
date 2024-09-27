@@ -184,6 +184,7 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
         student,
         rank: index + 1,
         enrolledCouse,
+        choiceNo: student.choices.indexOf(enrolledCouse.id) + 1,
       });
     }
 
@@ -243,7 +244,7 @@ export const confirmAllocation = async (req, res) => {
 };
 
 // TEMP
-export const randomAlloteChoices = async () => {
+export const randomAlloteChoices = async (req, res) => {
   try {
     const students = await Student.find();
     const minors = await Minor.find();
@@ -273,8 +274,10 @@ export const randomAlloteChoices = async () => {
 
     await Student.bulkWrite(bulkUpdates);
     console.log("Choices allocated successfully");
+    res.status(200).json({ message: "Choices allocated successfully" });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: err.message });
   }
 };
 
