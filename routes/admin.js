@@ -1,5 +1,5 @@
 import express from "express";
-import { confirmAllocation, downloadCSV, getMinorAllocation, randomAlloteChoices } from "../controllers/admin.js";
+import { confirmAllocation, downloadCSV, downloadCSVMinorAllocation, downloadCSVStudentsAllocation, getMinorAllocation, randomAlloteChoices } from "../controllers/admin.js";
 import { editTimeline, getTimeline, resetTimeline, setTimeline } from "../controllers/settings.js";
 
 const router = express.Router();
@@ -7,6 +7,8 @@ const router = express.Router();
 // GET
 router.get("/allocate", getMinorAllocation);
 router.get("/download/csv", downloadCSV);
+router.get("/allocate/students/download", downloadCSVStudentsAllocation);
+router.get("/allocate/minor/:id/download", downloadCSVMinorAllocation);
 
 // UPDATE
 router.patch("/allocate/confirm", confirmAllocation);

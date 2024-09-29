@@ -46,6 +46,10 @@ const studentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    dateOfBirth: {
+      type: Date,
+      required: true,
+    },
     choices: {
       type: [String],
 			default: [],

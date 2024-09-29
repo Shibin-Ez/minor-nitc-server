@@ -3,6 +3,7 @@ import Student from "../models/Student.js";
 import { courses, students } from "../data.js";
 import { createStudentsFromCSV } from "./students.js";
 import { createMinorsFromCSV } from "./minors.js";
+import { Parser } from "json2csv";
 
 // UPLOAD
 export const uploadCSV = async (req, res) => {
@@ -49,6 +50,111 @@ export const downloadCSV = async (req, res) => {
   }
 };
 
+export const downloadCSVMinors = async (req, res) => {
+  try {
+    res.download("./public/assets/minors.csv", "minors.csv");
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err.message });
+  }
+};
+
+const formatDate = (date) => {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+export const downloadCSVStudentsAllocation = async (req, res) => {
+  try {
+    const min = req.query.min ? req.query.min : 10;
+    const max = req.query.max ? req.query.max : 50;
+    const students = await allocateMinors(max, min);
+    const minors = await Minor.find();
+    const csvData = students.studentWise.data.map((studentData) => {
+      const studentObj = {
+        regNo: studentData.student.regNo,
+        name: studentData.student.name,
+        cgpa: studentData.student.cgpa,
+        sgpaS2: studentData.student.sgpaS2,
+        sgpaS1: studentData.student.sgpaS1,
+        dateOfBirth: formatDate(studentData.student.dateOfBirth), // Format the date as dd-mm-yyyy
+        enrolledCourse: studentData.enrolledCouse.name,
+        choiceNo: studentData.choiceNo,
+      };
+
+      minors.forEach((minor, index) => {
+        if (index < studentData.student.choices.length) {
+          const minorId = studentData.student.choices[index];
+          const minorData = minors.find((minor) => minor._id == minorId);
+          studentObj[`choice${index + 1}`] = minorData
+            ? minorData.name
+            : "error";
+        } else {
+          studentObj[`choice${index + 1}`] = "none";
+        }
+      });
+
+      return studentObj;
+    });
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=students_allocation.csv"
+    );
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(csvData);
+    res.status(200).send(csv);
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err.message });
+  }
+};
+
+export const downloadCSVMinorAllocation = async (req, res) => {
+  try {
+    const min = req.query.min ? req.query.min : 10;
+    const max = req.query.max ? req.query.max : 50;
+    const minorId = req.params.id;
+    const students = await allocateMinors(max, min);
+    let minorName = "";
+    let csvData = [];
+
+    for (const minor of students.courseWise.data) {
+      if (minor.course._id == minorId) {
+        minorName = minor.course.name;
+        csvData = minor.students.map((studentData) => {
+          return {
+            regNo: studentData.student.regNo,
+            name: studentData.student.name,
+            cgpa: studentData.student.cgpa,
+            sgpaS2: studentData.student.sgpaS2,
+            sgpaS1: studentData.student.sgpaS1,
+            dateOfBirth: formatDate(studentData.student.dateOfBirth), // Format the date as dd-mm-yyyy
+            rank: studentData.rank,
+            choiceNo: studentData.choiceNo,
+          };
+        });
+      }
+    }
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=minor_allocation_${minorName}.csv`
+    );
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(csvData);
+    res.status(200).send(csv);
+  } catch (err) {
+    console.log(err);
+    res.status(409).json({ message: err.message });
+  }
+};
+
 // RUN
 export const allocateMinors = async (vacancies, minReqSeats) => {
   try {
@@ -64,6 +170,9 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
     students.sort((a, b) => {
       if (a.cgpa === b.cgpa) {
         if (a.sgpaS2 === b.sgpaS2) {
+          if (a.sgpaS1 === b.sgpaS1) {
+            return a.dateOfBirth - b.dateOfBirth;
+          }
           return b.sgpaS1 - a.sgpaS1;
         }
         return b.sgpaS2 - a.sgpaS2;
