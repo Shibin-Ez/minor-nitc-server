@@ -32,19 +32,14 @@ const storage = multer.diskStorage({
     cb(null, "public/assets");
   },
   filename: function (req, file, cb) {
-    cb(null, "students.csv");
+    // Dynamically determine the filename based on the route
+    if (req.originalUrl.includes("/admin/upload/csv/minors")) {
+      cb(null, "minors.csv"); // Save as minors.csv for minors upload route
+    } else {
+      cb(null, "students.csv"); // Save as students.csv for students upload route
+    }
   },
 });
-
-// const storage2 = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "public/assets");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, "minors.csv");
-//   },
-// });
-
 
 const csvFileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
@@ -55,7 +50,6 @@ const csvFileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage, fileFilter: csvFileFilter });
-// const upload2 = multer({ storage2, fileFilter: csvFileFilter });
 
 // Error handling middleware
 const handleMulterErrors = (err, req, res, next) => {

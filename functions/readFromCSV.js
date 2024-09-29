@@ -45,7 +45,6 @@ export const readFromCSVMinors = (filePath) => {
         const updatedMinors = minors.map((minor, index) => {
           return {
             ...minor,
-            credit: parseInt(minor.credit),
           };
         });
         console.log("CSV file successfully processed");

@@ -10,6 +10,7 @@ router.get("/download/csv", downloadCSV);
 router.get("/allocate/students/download", downloadCSVStudentsAllocation);
 router.get("/allocate/minor/:id/download", downloadCSVMinorAllocation);
 
+
 // UPDATE
 router.patch("/allocate/confirm", confirmAllocation);
 router.patch("/allocate/random", randomAlloteChoices);

@@ -38,8 +38,8 @@ export const createMinor = async (req, res) => {
 
 export const createMinorsFromCSV = async (req, res) => {
   try {
-    const minors = await readFromCSVMinors("./public/assets/students.csv");
-
+    const minors = await readFromCSVMinors("./public/assets/minors.csv");
+    console.log(minors);
     await Minor.deleteMany({});
     await Minor.insertMany(minors);
     console.log("successfully uploaded minors count: " + minors.length);
