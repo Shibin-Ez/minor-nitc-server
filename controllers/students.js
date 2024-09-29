@@ -64,6 +64,28 @@ export const getStudentResult = async (req, res) => {
   }
 };
 
+export const getStudentChoices = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+    const choices = [];
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const minors = await Minor.find();
+    for (let i = 0; i < student.choices.length; i++) {
+      const minor = minors.find((minor) => minor._id == student.choices[i]);
+      choices.push(minor);
+    }
+
+    res.status(200).json(choices);
+  } catch (err) {
+    console.log(err);
+    res.status(404).json({ message: err.message });
+  }
+};
+
 // UPDATE
 export const updateStudentWithChoices = async (req, res) => {
   try {

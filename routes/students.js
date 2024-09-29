@@ -2,6 +2,7 @@ import express from "express";
 import {
   createStudentsFromCSV,
   getStudentById,
+  getStudentChoices,
   getStudentResult,
   getStudents,
   setStudentVerification,
@@ -20,6 +21,7 @@ router.get("/", getStudents);
 router.get("/student/:id", getStudentById);
 router.get("/student/:id/result", getStudentResult);
 router.get("/timeline", getStage);
+router.get("/student/:id/choices", getStudentChoices);
 
 // UPDATE
 router.patch("/student/:id/choices", updateStudentWithChoices);
