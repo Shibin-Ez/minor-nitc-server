@@ -366,7 +366,7 @@ export const randomAlloteChoices = async (req, res) => {
     const choicesLen = minors.length;
     const bulkUpdates = [];
 
-    for (const [index, student] of students) {
+    for (const [index, student] of students.entries()) {
       const choices = [];
       for (const minor of minors) {
         choices.push(minor._id);
