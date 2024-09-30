@@ -366,18 +366,49 @@ export const randomAlloteChoices = async (req, res) => {
     const choicesLen = minors.length;
     const bulkUpdates = [];
 
-    for (const student of students) {
+    for (const [index, student] of students) {
       const choices = [];
       for (const minor of minors) {
         choices.push(minor._id);
       }
 
       const newChoices = [];
-      for (let i = 0; i < choicesLen; i++) {
-        const randomIndex = i; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[randomIndex]);
-        choices.splice(randomIndex, 1);
+      if (index < 6) {
+        for (let i = 0; i < choicesLen; i++) {
+          const randomIndex = i; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex]);
+          choices.splice(randomIndex, 1);
+        }
+      } else if (index < 8) {
+        // for (let i = 0; i < choicesLen; i++) {
+          const randomIndex = 2; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex]);
+          choices.splice(randomIndex, 1);
+
+          const randomIndex2 = 0; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex2]);
+          choices.splice(randomIndex2, 1);
+
+          const randomIndex3 = 4; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex3]);
+          choices.splice(randomIndex3, 1);
+        // }
+      } else {
+        // for (let i = 0; i < choicesLen; i++) {
+          const randomIndex = 4; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex]);
+          choices.splice(randomIndex, 1);
+
+          const randomIndex2 = 0; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex2]);
+          choices.splice(randomIndex2, 1);
+
+          const randomIndex3 = 2; // Math.floor(Math.random() * choices.length);
+          newChoices.push(choices[randomIndex3]);
+          choices.splice(randomIndex3, 1);
+        // }
       }
+
       bulkUpdates.push({
         updateOne: {
           filter: { _id: student._id },
