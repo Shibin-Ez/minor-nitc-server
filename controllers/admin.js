@@ -379,7 +379,7 @@ export const randomAlloteChoices = async (req, res) => {
           newChoices.push(choices[randomIndex]);
           choices.splice(randomIndex, 1);
         }
-      } else if (index < 8) {
+      } else if (index < 9) {
         // for (let i = 0; i < choicesLen; i++) {
         const randomIndex = 1; // Math.floor(Math.random() * choices.length);
         newChoices.push(choices[2]);
