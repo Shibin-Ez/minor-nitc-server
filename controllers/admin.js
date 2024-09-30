@@ -155,6 +155,11 @@ export const downloadCSVMinorAllocation = async (req, res) => {
   }
 };
 
+export const downloadCSVMinorsAllocationDetails = async (req, res) => {
+  const min = req.query.min ? req.query.min : 10;
+  const max = req.query.max ? req.query.max : 50;
+};
+
 // RUN
 export const allocateMinors = async (vacancies, minReqSeats) => {
   try {
@@ -369,7 +374,7 @@ export const randomAlloteChoices = async (req, res) => {
 
       const newChoices = [];
       for (let i = 0; i < choicesLen; i++) {
-        const randomIndex = Math.floor(Math.random() * choices.length);
+        const randomIndex = i; // Math.floor(Math.random() * choices.length);
         newChoices.push(choices[randomIndex]);
         choices.splice(randomIndex, 1);
       }

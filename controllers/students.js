@@ -1,6 +1,7 @@
 import Student from "../models/Student.js";
 import Minor from "../models/Minor.js";
 import { readFromCSV } from "../functions/readFromCSV.js";
+import { getStageFun } from "./settings.js";
 
 // CREATE
 export const createStudentsFromCSV = async () => {
@@ -93,6 +94,13 @@ export const updateStudentWithChoices = async (req, res) => {
     const { choices } = req.body; // expects array of minor ids
     console.log(choices);
     console.log(studentId);
+
+    const stage = await getStageFun();
+
+    if (stage.stage !== "choiceFilling") {
+      return res.status(403).json({ message: "Choice filling is not open" });
+    }
+
     const student = await Student.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
@@ -120,6 +128,12 @@ export const setStudentVerification = async (req, res) => {
   try {
     const studentId = req.params.id;
     const student = await Student.findById(studentId);
+
+    const stage = await getStageFun();
+    if (stage.stage !== "verification") {
+      return res.status(403).json({ message: "Verification is not open" });
+    }
+
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }

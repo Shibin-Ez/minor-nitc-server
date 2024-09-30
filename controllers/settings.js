@@ -57,39 +57,51 @@ export const getTimeline = async (req, res) => {
   }
 };
 
-export const getStage = async (req, res) => {
+export const getStageFun = async () => {
   try {
     const timelines = await Setting.find();
-    if (timelines.length === 0)
-      return res
-        .status(404)
-        .json({ stage: "notStarted", message: "timeline not found" });
+    if (timelines.length === 0) {
+      return { stage: "notStarted", message: "timeline not found" };
+    }
 
     const timeline = timelines[0];
-    const currentDate = new Date().toISOString();
-    // currentDate = currentDate.slice(0, -5) + '000Z';
-    console.log(currentDate);
+    const currentDate = new Date();
+    console.log(currentDate.toISOString());
     console.log(timeline.verificationEndDate);
 
-    const currentDateObj = new Date(currentDate);
     const startDateObj = new Date(timeline.startDate);
     const verificationEndDateObj = new Date(timeline.verificationEndDate);
     const choicefillingStartDateObj = new Date(timeline.choicefillingStartDate);
     const choicefillingEndDateObj = new Date(timeline.choicefillingEndDate);
 
-    if (currentDateObj < startDateObj)
-      return res.status(200).json({ stage: "notStarted" });
+    if (currentDate < startDateObj) {
+      return { stage: "notStarted" };
+    }
 
-    if (currentDateObj < verificationEndDateObj)
-      return res.status(200).json({ stage: "verification" });
+    if (currentDate < verificationEndDateObj) {
+      return { stage: "verification" };
+    }
 
-    if (currentDateObj < choicefillingStartDateObj)
-      return res.status(200).json({ stage: "verificationEnd" });
+    if (currentDate < choicefillingStartDateObj) {
+      return { stage: "verificationEnd" };
+    }
 
-    if (currentDateObj < choicefillingEndDateObj)
-      return res.status(200).json({ stage: "choiceFilling" });
+    if (currentDate < choicefillingEndDateObj) {
+      return { stage: "choiceFilling" };
+    }
 
-    return res.status(200).json({ stage: "choiceFillingEnd" });
+    return { stage: "choiceFillingEnd" };
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.message); // Propagate the error
+  }
+};
+
+
+export const getStage = async (req, res) => {
+  try {
+    const stage = await getStageFun();
+    res.status(200).json(stage);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err.message });

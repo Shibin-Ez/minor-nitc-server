@@ -1,4 +1,5 @@
 import Student from "../models/Student.js";
+import jwt from "jsonwebtoken";
 
 // firebase login
 export const continueWithGoogle = async (req, res) => {
@@ -31,10 +32,14 @@ export const continueWithGoogle = async (req, res) => {
 
     if (!student) return res.status(404).json({ message: "Student not found" });
 
+    // create token
+    // const accessToken = jwt.sign(student._id, process.env.JWT_SECRET);
+
     res
       .status(200)
       .json({
         success: true,
+        // token: accessToken,
         studentId: student._id,
         semester,
         message: "Login successful",
