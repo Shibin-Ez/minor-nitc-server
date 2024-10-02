@@ -1,0 +1,2 @@
+GET http://localhost:3001/students/student/66fce6baeecaee46bc45edc4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZmNlNmJhZWVjYWVlNDZiYzQ1ZWRjNCIsImlhdCI6MTcyNzg1NzEyMn0.ibECpDrhMrwS5OP0zjzrRG9gd91iHkPbb1zzR5tSp04

@@ -30,7 +30,7 @@ export const getStudents = async (req, res) => {
 
 export const getStudentById = async (req, res) => {
   try {
-    const studentId = req.userId;
+    const studentId = req.user.id;
     const student = await Student.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
@@ -43,7 +43,7 @@ export const getStudentById = async (req, res) => {
 
 export const getStudentResult = async (req, res) => {
   try {
-    const studentId = req.userId;
+    const studentId = req.user.id;
     console.log(studentId)
     const student = await Student.findById(studentId);
     if (!student) {
@@ -67,7 +67,7 @@ export const getStudentResult = async (req, res) => {
 
 export const getStudentChoices = async (req, res) => {
   try {
-    const studentId = req.userId;
+    const studentId = req.user.id;
     const student = await Student.findById(studentId);
     const choices = [];
     if (!student) {
@@ -90,7 +90,7 @@ export const getStudentChoices = async (req, res) => {
 // UPDATE
 export const updateStudentWithChoices = async (req, res) => {
   try {
-    const studentId = req.params.id;
+    const studentId = req.user.id;
     const { choices } = req.body; // expects array of minor ids
     console.log(choices);
     console.log(studentId);
@@ -126,7 +126,7 @@ export const deleteStudentsChoices = async () => {
 
 export const setStudentVerification = async (req, res) => {
   try {
-    const studentId = req.userId;
+    const studentId = req.user.id;
     const student = await Student.findById(studentId);
 
     const stage = await getStageFun();

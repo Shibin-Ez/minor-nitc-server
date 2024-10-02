@@ -33,7 +33,9 @@ export const continueWithGoogle = async (req, res) => {
     if (!student) return res.status(404).json({ message: "Student not found" });
 
     // create token
-    const accessToken = jwt.sign(student._id, process.env.JWT_SECRET);
+    const studentObj = { id: student._id };
+    const accessToken = jwt.sign(studentObj, process.env.JWT_SECRET);
+    console.log(accessToken);
 
     res
       .status(200)
