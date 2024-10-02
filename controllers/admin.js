@@ -373,40 +373,10 @@ export const randomAlloteChoices = async (req, res) => {
       }
 
       const newChoices = [];
-      if (index < 6) {
-        for (let i = 0; i < choicesLen; i++) {
-          const randomIndex = i; // Math.floor(Math.random() * choices.length);
-          newChoices.push(choices[randomIndex]);
-          choices.splice(randomIndex, 1);
-        }
-      } else if (index < 9) {
-        // for (let i = 0; i < choicesLen; i++) {
-        const randomIndex = 1; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[2]);
-        // choices.splice(randomIndex, 3);
-
-        const randomIndex2 = 0; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[0]);
-        // choices.splice(randomIndex2, 1);
-
-        const randomIndex3 = 2; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[4]);
-        // choices.splice(randomIndex3, 1);
-        // }
-      } else {
-        // for (let i = 0; i < choicesLen; i++) {
-        const randomIndex = 2; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[4]);
-        // choices.splice(randomIndex, 1);
-
-        const randomIndex2 = 0; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[0]);
-        // choices.splice(randomIndex2, 1);
-
-        const randomIndex3 = 1; // Math.floor(Math.random() * choices.length);
-        newChoices.push(choices[2]);
-        // choices.splice(randomIndex3, 1);
-        // }
+      for (let i = 0; i < choicesLen; i++) {
+        const randomIndex = Math.floor(Math.random() * choices.length);
+        newChoices.push(choices[randomIndex]);
+        choices.splice(randomIndex, 1);
       }
 
       bulkUpdates.push({

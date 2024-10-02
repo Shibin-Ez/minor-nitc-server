@@ -21,8 +21,15 @@ export const createStudentsFromCSV = async () => {
 // READ
 export const getStudents = async (req, res) => {
   try {
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : -1;
     const students = await Student.find();
-    res.status(200).json(students);
+    if (limit === -1) {
+      res.status(200).json(students);
+      return;
+    }
+    const limitedStudents = students.slice((page - 1) * limit, page * limit);
+    res.status(200).json(limitedStudents);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }

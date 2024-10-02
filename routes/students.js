@@ -15,7 +15,7 @@ import authToken from "../middlewares/authToken.js";
 const router = express.Router();
 
 // CREATE
-router.post("/csv", createStudentsFromCSV);
+// router.post("/csv", createStudentsFromCSV);
 
 // READ
 router.get("/", getStudents);
