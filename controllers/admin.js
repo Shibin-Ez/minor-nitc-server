@@ -14,7 +14,9 @@ export const uploadCSV = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    await createStudentsFromCSV();
+    const response = await createStudentsFromCSV();
+    
+    if (!response) return res.status(409).json({ message: "Invalid CSV format" });
 
     res.status(201).json({ message: "File uploaded successfully" });
   } catch (err) {
@@ -31,7 +33,9 @@ export const uploadCSVMinors = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    await createMinorsFromCSV();
+    const response = await createMinorsFromCSV();
+
+    if (!response) return res.status(409).json({ message: "Invalid CSV format" });
 
     res.status(201).json({ message: "File uploaded successfully" });
   } catch (err) {
@@ -43,6 +47,12 @@ export const uploadCSVMinors = async (req, res) => {
 // DOWNLOAD
 export const downloadCSV = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     res.download("./public/assets/students.csv", "students.csv");
   } catch (err) {
     console.log(err);
@@ -69,6 +79,12 @@ const formatDate = (date) => {
 
 export const downloadCSVStudentsAllocation = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const min = req.query.min ? req.query.min : 10;
     const max = req.query.max ? req.query.max : 50;
     const students = await allocateMinors(max, min);
@@ -116,6 +132,12 @@ export const downloadCSVStudentsAllocation = async (req, res) => {
 
 export const downloadCSVMinorAllocation = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const min = req.query.min ? req.query.min : 10;
     const max = req.query.max ? req.query.max : 50;
     const minorId = req.params.id;
@@ -317,8 +339,35 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
   }
 };
 
+export const getSingleMinorAllocation = async (req, res) => {
+  try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const vacancies = req.query.max ? req.query.max : 50;
+    const minReqSeats = req.query.min ? req.query.min : 10;
+    const minorId = req.params.id;
+    const details = await allocateMinors(vacancies, minReqSeats);
+    const minorDetails = details.courseWise.data.find(minor => minor.course._id == minorId);
+    res.status(200).json(minorDetails.students);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getMinorAllocation = async (req, res) => {
   try {
+
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const vacancies = req.query.max ? req.query.max : 50;
     const minReqSeats = req.query.min ? req.query.min : 10;
     const details = await allocateMinors(vacancies, minReqSeats);
@@ -331,6 +380,12 @@ export const getMinorAllocation = async (req, res) => {
 
 export const confirmAllocation = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const vacancies = req.query.max ? req.query.max : 50;
     const minReqSeats = req.query.min ? req.query.min : 10;
     const students = await allocateMinors(vacancies, minReqSeats);
@@ -360,6 +415,12 @@ export const confirmAllocation = async (req, res) => {
 // TEMP
 export const randomAlloteChoices = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const students = await Student.find();
     const minors = await Minor.find();
 

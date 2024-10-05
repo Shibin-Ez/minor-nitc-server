@@ -18,7 +18,7 @@ const router = express.Router();
 // router.post("/csv", createStudentsFromCSV);
 
 // READ
-router.get("/", getStudents);
+router.get("/", authToken, getStudents);
 router.get("/student/:id", authToken, getStudentById);
 router.get("/student/:id/result", authToken, getStudentResult);
 router.get("/timeline", getStage);

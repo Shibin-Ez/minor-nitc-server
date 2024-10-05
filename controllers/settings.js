@@ -4,6 +4,12 @@ import { deleteStudentsChoices } from "./students.js";
 // CREATE
 export const setTimeline = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const {
       startDate,
       verificationEndDate,
@@ -49,6 +55,12 @@ export const setTimeline = async (req, res) => {
 // READ
 export const getTimeline = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const timelines = await Setting.find();
     res.status(200).json(timelines[0]);
   } catch (err) {
@@ -111,6 +123,12 @@ export const getStage = async (req, res) => {
 // UPDATE
 export const editTimeline = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     const {
       startDate,
       verificationEndDate,
@@ -147,6 +165,12 @@ export const editTimeline = async (req, res) => {
 // DELETE
 export const resetTimeline = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
     // delete timeline
     await Setting.deleteMany({});
 

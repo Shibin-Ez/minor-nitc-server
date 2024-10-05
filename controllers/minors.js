@@ -43,6 +43,7 @@ export const createMinorsFromCSV = async (req, res) => {
     await Minor.deleteMany({});
     await Minor.insertMany(minors);
     console.log("successfully uploaded minors count: " + minors.length);
+    return true;
   } catch (err) {
     res.status(409).json({ message: err.message });
   }

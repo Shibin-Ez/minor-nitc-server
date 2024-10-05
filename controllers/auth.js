@@ -37,15 +37,38 @@ export const continueWithGoogle = async (req, res) => {
     const accessToken = jwt.sign(studentObj, process.env.JWT_SECRET);
     console.log(accessToken);
 
-    res
-      .status(200)
-      .json({
+    res.status(200).json({
+      success: true,
+      token: accessToken,
+      studentId: student._id,
+      semester,
+      message: "Login successful",
+    });
+  } catch (err) {
+    res.status(409).json({ message: err.message });
+    console.log(err);
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (
+      username === process.env.ADMIN_USERNAME &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const adminObj = { username: "admin" };
+      const accessToken = jwt.sign(adminObj, process.env.JWT_SECRET);
+      return res.status(200).json({
         success: true,
         token: accessToken,
-        studentId: student._id,
-        semester,
         message: "Login successful",
       });
+    } else {
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid credentials" });
+    }
   } catch (err) {
     res.status(409).json({ message: err.message });
     console.log(err);

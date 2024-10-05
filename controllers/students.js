@@ -11,7 +11,7 @@ export const createStudentsFromCSV = async () => {
     await Student.deleteMany({});
     await Student.insertMany(students);
     console.log("successfully uploaded students count: " + students.length);
-    // res.status(201).json({ message: "Students created successfully" });
+    return true;
   } catch (err) {
     console.log(err);
     // res.status(409).json({ message: err.message });
@@ -21,11 +21,26 @@ export const createStudentsFromCSV = async () => {
 // READ
 export const getStudents = async (req, res) => {
   try {
+    const username = req.user.username;
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const totalStudents = await Student.countDocuments();
+
     const page = req.query.page ? parseInt(req.query.page) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit) : -1;
-    const students = await Student.find();
+    const limit = req.query.limit ? parseInt(req.query.limit) : totalStudents;
+
+    const students = await Student.find()
+      .skip((page - 1) * limit)
+      .limit(limit);
+
     if (limit === -1) {
-      res.status(200).json(students);
+      res.status(200).json({
+        students,
+        currentPage: page,
+        totalPages: math.ceil(totalStudents / limit),
+      });
       return;
     }
     const limitedStudents = students.slice((page - 1) * limit, page * limit);
@@ -51,14 +66,14 @@ export const getStudentById = async (req, res) => {
 export const getStudentResult = async (req, res) => {
   try {
     const studentId = req.user.id;
-    console.log(studentId)
+    console.log(studentId);
     const student = await Student.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
-    
+
     // updatedStudent with course key
-    const updatedStudent = {...student._doc, course: null};
+    const updatedStudent = { ...student._doc, course: null };
     if (student.enrolled !== "none") {
       const course = await Minor.findById(student.enrolled);
       console.log(course);
@@ -112,6 +127,11 @@ export const updateStudentWithChoices = async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
+
+    if (student.choices.length !== 0) {
+      return res.status(403).json({ message: "Choices already filled" });
+    }
+
     student.choices = choices;
     await student.save();
     res.status(200).json(student);

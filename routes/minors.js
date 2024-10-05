@@ -5,7 +5,7 @@ import { downloadCSVMinors } from '../controllers/admin.js';
 const router = express.Router();
 
 // CREATE
-router.post('/', createMinor);
+// router.post('/', createMinor);
 // router.post("/csv", createMinorsFromCSV);
 
 // READ

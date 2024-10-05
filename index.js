@@ -14,6 +14,7 @@ import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import { uploadCSV, uploadCSVMinors } from "./controllers/admin.js";
 import middleware from "./middlewares/middleware.js";
+import authToken from "./middlewares/authToken.js";
 
 // import globalTunnel from "global-tunnel-ng";
 // CONFIGURATION
@@ -67,12 +68,14 @@ const handleMulterErrors = (err, req, res, next) => {
 // ROUTE WITH FILES
 app.post(
   "/admin/upload/csv",
+  authToken,
   upload.single("file"),
   uploadCSV,
   handleMulterErrors
 );
 app.post(
   "/admin/upload/csv/minors",
+  authToken,
   upload.single("file"),
   uploadCSVMinors,
   handleMulterErrors
