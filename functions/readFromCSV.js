@@ -88,7 +88,7 @@ export const readFromCSVMinors = (filePath) => {
   return new Promise((resolve, reject) => {
     const minors = [];
     let errorOccurred = false;
-    
+
     fs.createReadStream(filePath)
       .pipe(csv())
       .on("data", (row) => {
@@ -97,6 +97,7 @@ export const readFromCSVMinors = (filePath) => {
       .on("end", () => {
         const updatedMinors = minors.map((minor, index) => {
           if (!minor.name || !minor.faculty || !minor.facultyEmail) {
+            errorOccurred = true;
             throw new Error(
               `Invalid CSV format: Missing fields in row ${index + 1}`
             );

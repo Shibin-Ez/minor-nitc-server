@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const settingsSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String, // Make _id a String type
+    },
     startDate: {
       type: Date,
       required: true,
@@ -17,6 +20,10 @@ const settingsSchema = new mongoose.Schema(
     choicefillingEndDate: {
       type: Date,
       required: true,
+    },
+    resultDate: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

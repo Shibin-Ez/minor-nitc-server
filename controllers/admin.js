@@ -4,6 +4,8 @@ import { courses, students } from "../data.js";
 import { createStudentsFromCSV } from "./students.js";
 import { createMinorsFromCSV } from "./minors.js";
 import { Parser } from "json2csv";
+import { getStageFun } from "./settings.js";
+import Setting from "../models/Settings.js";
 
 // UPLOAD
 export const uploadCSV = async (req, res) => {
@@ -15,8 +17,9 @@ export const uploadCSV = async (req, res) => {
     }
 
     const response = await createStudentsFromCSV();
-    
-    if (!response) return res.status(409).json({ message: "Invalid CSV format" });
+
+    if (!response)
+      return res.status(409).json({ message: "Invalid CSV format" });
 
     res.status(201).json({ message: "File uploaded successfully" });
   } catch (err) {
@@ -35,7 +38,8 @@ export const uploadCSVMinors = async (req, res) => {
 
     const response = await createMinorsFromCSV();
 
-    if (!response) return res.status(409).json({ message: "Invalid CSV format" });
+    if (!response)
+      return res.status(409).json({ message: "Invalid CSV format" });
 
     res.status(201).json({ message: "File uploaded successfully" });
   } catch (err) {
@@ -97,7 +101,7 @@ export const downloadCSVStudentsAllocation = async (req, res) => {
         sgpaS2: studentData.student.sgpaS2,
         sgpaS1: studentData.student.sgpaS1,
         dateOfBirth: formatDate(studentData.student.dateOfBirth), // Format the date as dd-mm-yyyy
-        enrolledCourse: studentData.enrolledCouse.name,
+        enrolledCourse: studentData.enrolledCourse.name,
         choiceNo: studentData.choiceNo,
       };
 
@@ -249,7 +253,7 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
         for (const [index, course] of courses.entries()) {
           if (course.enrolled === min) {
             console.log(`Course ${course.code} deleted`);
-            droppedCourses.push(course);
+            droppedCourses.push({course, students: [], enrolled: 0, isDropped: true});
             courses.splice(index, 1);
           }
         }
@@ -287,6 +291,7 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
         course,
         enrolled: course.enrolled,
         students: studentsData,
+        isDropped: false,
       });
 
       console.log();
@@ -299,11 +304,11 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
     const studentWiseData = [];
     const unallocatedStudents = [];
     for (const [index, student] of students.entries()) {
-      let enrolledCouse = {};
+      let enrolledCourse = {};
       let atleastOne = false;
       for (const course of courses) {
         if (student.enrolled === course.id) {
-          enrolledCouse = course;
+          enrolledCourse = course;
           atleastOne = true;
           break;
         }
@@ -319,9 +324,13 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
       studentWiseData.push({
         student,
         rank: index + 1,
-        enrolledCouse,
-        choiceNo: student.choices.indexOf(enrolledCouse.id) + 1,
+        enrolledCourse,
+        choiceNo: student.choices.indexOf(enrolledCourse.id) + 1,
       });
+    }
+
+    for (const item of droppedCourses) {
+      courseWiseData.push(item);
     }
 
     return {
@@ -351,7 +360,9 @@ export const getSingleMinorAllocation = async (req, res) => {
     const minReqSeats = req.query.min ? req.query.min : 10;
     const minorId = req.params.id;
     const details = await allocateMinors(vacancies, minReqSeats);
-    const minorDetails = details.courseWise.data.find(minor => minor.course._id == minorId);
+    const minorDetails = details.courseWise.data.find(
+      (minor) => minor.course._id == minorId
+    );
     res.status(200).json(minorDetails.students);
   } catch (err) {
     console.log(err);
@@ -361,7 +372,6 @@ export const getSingleMinorAllocation = async (req, res) => {
 
 export const getMinorAllocation = async (req, res) => {
   try {
-
     const username = req.user.username;
 
     if (username !== process.env.ADMIN_USERNAME) {
@@ -378,12 +388,50 @@ export const getMinorAllocation = async (req, res) => {
   }
 };
 
+export const getMinorAllocationStudents = async (req, res) => {
+  try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const page = req.query.page ? parseInt(req.query.page) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit) : totalStudents;
+
+    const vacancies = req.query.max ? req.query.max : 50;
+    const minReqSeats = req.query.min ? req.query.min : 10;
+    const details = await allocateMinors(vacancies, minReqSeats);
+    res.status(200).json({
+      students: details.studentWise.data.slice(
+        (page - 1) * limit,
+        page * limit
+      ),
+      currentPage: page,
+      totalPages: Math.ceil(details.studentWise.data.length / limit),
+      totalStudents: details.studentWise.data.length,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const confirmAllocation = async (req, res) => {
   try {
     const username = req.user.username;
 
     if (username !== process.env.ADMIN_USERNAME) {
       return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const stage = await getStageFun();
+    if (stage.stage === "resultPublished") {
+      return res.status(409).json({ message: "result already published" });
+    }
+    
+    if (stage.stage !== "choiceFillingEnd") {
+      return res.status(409).json({ message: "choice filling not finished" });
     }
 
     const vacancies = req.query.max ? req.query.max : 50;
@@ -396,13 +444,18 @@ export const confirmAllocation = async (req, res) => {
       bulkUpdates.push({
         updateOne: {
           filter: { _id: studentData.student._id },
-          update: { enrolled: studentData.enrolledCouse._id },
+          update: { enrolled: studentData.enrolledCourse._id },
         },
       });
     }
 
     await Student.bulkWrite(bulkUpdates);
     console.log("students enrolled and assigned to minors successfully");
+
+    const date = new Date().toISOString();
+    const response = await Setting.findByIdAndUpdate("timeline", { resultDate: date }, {new: true});
+    console.log(response);
+
     res.status(200).json({
       message: "students enrolled and assigned to minors successfully",
     });

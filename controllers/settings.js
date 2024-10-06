@@ -38,6 +38,7 @@ export const setTimeline = async (req, res) => {
     }
 
     const newSetting = new Setting({
+      _id: "timeline",
       startDate,
       verificationEndDate,
       choicefillingStartDate,
@@ -77,6 +78,7 @@ export const getStageFun = async () => {
     }
 
     const timeline = timelines[0];
+    console.log(timeline);
     const currentDate = new Date();
     console.log(currentDate.toISOString());
     console.log(timeline.verificationEndDate);
@@ -85,6 +87,11 @@ export const getStageFun = async () => {
     const verificationEndDateObj = new Date(timeline.verificationEndDate);
     const choicefillingStartDateObj = new Date(timeline.choicefillingStartDate);
     const choicefillingEndDateObj = new Date(timeline.choicefillingEndDate);
+    const resultDateObj = timeline.resultDate && new Date(timeline.resultDate);
+
+    if (resultDateObj && currentDate >= resultDateObj) {
+      return { stage: "resultPublished" };
+    }
 
     if (currentDate < startDateObj) {
       return { stage: "notStarted" };

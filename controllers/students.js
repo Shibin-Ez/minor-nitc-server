@@ -35,16 +35,15 @@ export const getStudents = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit);
 
-    if (limit === -1) {
-      res.status(200).json({
+    // const limitedStudents = students.slice((page - 1) * limit, page * limit);
+    res
+      .status(200)
+      .json({
         students,
         currentPage: page,
-        totalPages: math.ceil(totalStudents / limit),
+        totalPages: Math.ceil(totalStudents / limit),
+        totalStudents,
       });
-      return;
-    }
-    const limitedStudents = students.slice((page - 1) * limit, page * limit);
-    res.status(200).json(limitedStudents);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
