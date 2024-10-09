@@ -6,7 +6,7 @@ import "../controllers/passport.js";
 const router = express.Router();
 
 // login
-router.post("/login", continueWithGoogle);
+// router.post("/login", continueWithGoogle); do not allow this route
 router.post("/admin-login", adminLogin);
 
 // passport

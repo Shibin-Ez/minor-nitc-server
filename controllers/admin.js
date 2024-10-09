@@ -253,7 +253,12 @@ export const allocateMinors = async (vacancies, minReqSeats) => {
         for (const [index, course] of courses.entries()) {
           if (course.enrolled === min) {
             console.log(`Course ${course.code} deleted`);
-            droppedCourses.push({course, students: [], enrolled: 0, isDropped: true});
+            droppedCourses.push({
+              course,
+              students: [],
+              enrolled: 0,
+              isDropped: true,
+            });
             courses.splice(index, 1);
           }
         }
@@ -429,7 +434,7 @@ export const confirmAllocation = async (req, res) => {
     if (stage.stage === "resultPublished") {
       return res.status(409).json({ message: "result already published" });
     }
-    
+
     if (stage.stage !== "choiceFillingEnd") {
       return res.status(409).json({ message: "choice filling not finished" });
     }
@@ -453,7 +458,11 @@ export const confirmAllocation = async (req, res) => {
     console.log("students enrolled and assigned to minors successfully");
 
     const date = new Date().toISOString();
-    const response = await Setting.findByIdAndUpdate("timeline", { resultDate: date }, {new: true});
+    const response = await Setting.findByIdAndUpdate(
+      "timeline",
+      { resultDate: date },
+      { new: true }
+    );
     console.log(response);
 
     res.status(200).json({
@@ -510,4 +519,21 @@ export const randomAlloteChoices = async (req, res) => {
   }
 };
 
-// randomAlloteChoices();
+export const getStudentByIdForAdmin = async (req, res) => {
+  try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.status(200).json(student);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
