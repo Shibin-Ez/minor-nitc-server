@@ -1,5 +1,5 @@
 import express from "express";
-import { confirmAllocation, downloadCSV, downloadCSVMinorAllocation, downloadCSVStudentsAllocation, getMinorAllocation, getMinorAllocationStudents, getSingleMinorAllocation, getStudentByIdForAdmin, randomAlloteChoices } from "../controllers/admin.js";
+import { confirmAllocation, downloadCSV, downloadCSVMinorAllocation, downloadCSVStudentsAllocation, getMinorAllocation, getMinorAllocationStudents, getSingleMinorAllocation, getStudentByIdForAdmin, randomAlloteChoices, updateStudentDetails } from "../controllers/admin.js";
 import { editTimeline, getTimeline, resetTimeline, setTimeline } from "../controllers/settings.js";
 import authToken from "../middlewares/authToken.js";
 
@@ -18,6 +18,7 @@ router.get("/student/:id", authToken, getStudentByIdForAdmin);
 // UPDATE
 router.patch("/allocate/confirm", authToken, confirmAllocation);
 router.patch("/allocate/random", authToken, randomAlloteChoices);
+router.patch("/student/:id", authToken, updateStudentDetails);
 
 // TIMELINE
 router.post("/timeline", authToken, setTimeline);

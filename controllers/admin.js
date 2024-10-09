@@ -537,3 +537,29 @@ export const getStudentByIdForAdmin = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+export const updateStudentDetails = async (req, res) => {
+  try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const correctedDetailsObj = req.body; // object containg data of corrected details only
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      correctedDetailsObj,
+      { new: true }
+    );
+    res.status(200).json(updatedStudent);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
