@@ -74,3 +74,6 @@ export const adminLogin = async (req, res) => {
     console.log(err);
   }
 };
+
+
+export const googleLogin = async (req, res) => {};
