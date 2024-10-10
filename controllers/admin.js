@@ -1,15 +1,26 @@
 import Minor from "../models/Minor.js";
 import Student from "../models/Student.js";
-import { courses, students } from "../data.js";
 import { createStudentsFromCSV } from "./students.js";
 import { createMinorsFromCSV } from "./minors.js";
 import { Parser } from "json2csv";
 import { getStageFun } from "./settings.js";
 import Setting from "../models/Settings.js";
+import Parameter from "../models/Parameter.js";
 
 // UPLOAD
 export const uploadCSV = async (req, res) => {
   try {
+    const username = req.user.username;
+
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const stage = await getStageFun();
+    if (stage.stage !== "notStarted") {
+      return res.status(409).json({ message: "Timeline already set" });
+    }
+
     console.log(req.file);
     const file = req.file;
     if (!file) {
@@ -30,6 +41,17 @@ export const uploadCSV = async (req, res) => {
 
 export const uploadCSVMinors = async (req, res) => {
   try {
+    const username = req.user.username;
+    
+    if (username !== process.env.ADMIN_USERNAME) {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const stage = await getStageFun();
+    if (stage.stage !== "notStarted") {
+      return res.status(409).json({ message: "Timeline already set" });
+    }
+
     console.log(req.file);
     const file = req.file;
     if (!file) {
@@ -89,9 +111,16 @@ export const downloadCSVStudentsAllocation = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    const min = req.query.min ? req.query.min : 10;
-    const max = req.query.max ? req.query.max : 50;
-    const students = await allocateMinors(max, min);
+    let vacancies = req.query.max ? req.query.max : 50;
+    let minReqSeats = req.query.min ? req.query.min : 10;
+
+    const parameters = await Parameter.find(); // return array of length 1 or 0
+    if (parameters.length === 1) {
+      vacancies = parameters[0].maxStudents;
+      minReqSeats = parameters[0].minStudents;
+    }
+
+    const students = await allocateMinors(vacancies, minReqSeats);
     const minors = await Minor.find();
     const csvData = students.studentWise.data.map((studentData) => {
       const studentObj = {
@@ -142,10 +171,17 @@ export const downloadCSVMinorAllocation = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    const min = req.query.min ? req.query.min : 10;
-    const max = req.query.max ? req.query.max : 50;
+    let vacancies = req.query.max ? req.query.max : 50;
+    let minReqSeats = req.query.min ? req.query.min : 10;
+
+    const parameters = await Parameter.find(); // return array of length 1 or 0
+    if (parameters.length === 1) {
+      vacancies = parameters[0].maxStudents;
+      minReqSeats = parameters[0].minStudents;
+    }
+
     const minorId = req.params.id;
-    const students = await allocateMinors(max, min);
+    const students = await allocateMinors(vacancies, minReqSeats);
     let minorName = "";
     let csvData = [];
 
@@ -361,8 +397,16 @@ export const getSingleMinorAllocation = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    const vacancies = req.query.max ? req.query.max : 50;
-    const minReqSeats = req.query.min ? req.query.min : 10;
+    let vacancies = req.query.max ? req.query.max : 50;
+    let minReqSeats = req.query.min ? req.query.min : 10;
+    console.log(vacancies, minReqSeats);
+    const parameters = await Parameter.find(); // return array of length 1 or 0
+    if (parameters.length === 1) {
+      vacancies = parameters[0].maxStudents;
+      minReqSeats = parameters[0].minStudents;
+    }
+    console.log("hello: ", vacancies, minReqSeats);
+
     const minorId = req.params.id;
     const details = await allocateMinors(vacancies, minReqSeats);
     const minorDetails = details.courseWise.data.find(
@@ -383,8 +427,15 @@ export const getMinorAllocation = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    const vacancies = req.query.max ? req.query.max : 50;
-    const minReqSeats = req.query.min ? req.query.min : 10;
+    let vacancies = req.query.max ? req.query.max : 50;
+    let minReqSeats = req.query.min ? req.query.min : 10;
+
+    const parameters = await Parameter.find(); // return array of length 1 or 0
+    if (parameters.length === 1) {
+      vacancies = parameters[0].maxStudents;
+      minReqSeats = parameters[0].minStudents;
+    }
+
     const details = await allocateMinors(vacancies, minReqSeats);
     res.status(200).json(details);
   } catch (err) {
@@ -404,9 +455,17 @@ export const getMinorAllocationStudents = async (req, res) => {
     const page = req.query.page ? parseInt(req.query.page) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit) : totalStudents;
 
-    const vacancies = req.query.max ? req.query.max : 50;
-    const minReqSeats = req.query.min ? req.query.min : 10;
+    let vacancies = req.query.max ? req.query.max : 50;
+    let minReqSeats = req.query.min ? req.query.min : 10;
+
+    const parameters = await Parameter.find(); // return array of length 1 or 0
+    if (parameters.length === 1) {
+      vacancies = parameters[0].maxStudents;
+      minReqSeats = parameters[0].minStudents;
+    }
+
     const details = await allocateMinors(vacancies, minReqSeats);
+
     res.status(200).json({
       students: details.studentWise.data.slice(
         (page - 1) * limit,
@@ -464,6 +523,15 @@ export const confirmAllocation = async (req, res) => {
       { new: true }
     );
     console.log(response);
+
+    // Set Parameters
+    const parameters = new Parameter({
+      _id: "parameters",
+      minStudents: minReqSeats,
+      maxStudents: vacancies,
+    });
+
+    const savedParameters = await parameters.save();
 
     res.status(200).json({
       message: "students enrolled and assigned to minors successfully",

@@ -147,7 +147,7 @@ export const updateStudentWithChoices = async (req, res) => {
 
 export const deleteStudentsChoices = async () => {
   try {
-    await Student.updateMany({}, { choices: [] });
+    await Student.updateMany({}, { choices: [], isVerified: false, enrolled: "none" }); 
     return true;
   } catch (err) {
     console.log(err);

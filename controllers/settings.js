@@ -1,3 +1,4 @@
+import Parameter from "../models/Parameter.js";
 import Setting from "../models/Settings.js";
 import { deleteStudentsChoices } from "./students.js";
 
@@ -183,6 +184,10 @@ export const resetTimeline = async (req, res) => {
 
     // delete students' choice details
     await deleteStudentsChoices();
+
+    // delet Parameters
+    await Parameter.deleteMany({});
+
     res.status(200).json({ message: "reset successful" });
   } catch (err) {
     console.log(err);
