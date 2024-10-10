@@ -36,14 +36,12 @@ export const getStudents = async (req, res) => {
       .limit(limit);
 
     // const limitedStudents = students.slice((page - 1) * limit, page * limit);
-    res
-      .status(200)
-      .json({
-        students,
-        currentPage: page,
-        totalPages: Math.ceil(totalStudents / limit),
-        totalStudents,
-      });
+    res.status(200).json({
+      students,
+      currentPage: page,
+      totalPages: Math.ceil(totalStudents / limit),
+      totalStudents,
+    });
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
@@ -117,6 +115,13 @@ export const updateStudentWithChoices = async (req, res) => {
     console.log(studentId);
 
     const stage = await getStageFun();
+
+    if (
+      stage.stage === "choiceFillingEnd" ||
+      stage.stage === "resultPublished"
+    ) {
+      return res.status(403).json({ message: "Choice filling is closed" });
+    }
 
     if (stage.stage !== "choiceFilling") {
       return res.status(403).json({ message: "Choice filling is not open" });

@@ -1,6 +1,12 @@
-import express from 'express';
-import { createMinor, createMinorsFromCSV, getMinorById, getMinors } from '../controllers/minors.js';
-import { downloadCSVMinors } from '../controllers/admin.js';
+import express from "express";
+import {
+  createMinor,
+  createMinorsFromCSV,
+  downloadMinorSyallabusPDF,
+  getMinorById,
+  getMinors,
+} from "../controllers/minors.js";
+import { downloadCSVMinors } from "../controllers/admin.js";
 
 const router = express.Router();
 
@@ -9,8 +15,9 @@ const router = express.Router();
 // router.post("/csv", createMinorsFromCSV);
 
 // READ
-router.get('/', getMinors);
+router.get("/", getMinors);
 router.get("/minor/:id", getMinorById);
+router.get("/minor/:id/download", downloadMinorSyallabusPDF);
 router.get("/csv/download", downloadCSVMinors);
 
 export default router;

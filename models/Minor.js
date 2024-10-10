@@ -14,9 +14,8 @@ const minorSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-    description: {
+    fileURL: {
       type: String,
-      required: true,
     },
   },
   {

@@ -71,3 +71,18 @@ export const getMinorById = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+export const downloadMinorSyallabusPDF = async (req, res) => {
+  try {
+    const minorId = req.params.id;
+    const minor = await Minor.findById(minorId);
+    if (!minor) {
+      return res.status(404).json({ message: "Minor not found" });
+    }
+
+    const file = `./public/assets/minors/${minor.fileURL}.pdf`;
+    res.download(file);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
